@@ -4,12 +4,10 @@ import { getImagesByQuery } from "./js/pixabay-api.js";
 import { createGallery, clearGallery, showLoader, hideLoader } from "./js/render-functions.js";
 
 
-const formEl = document.querySelector(".form");
+const formEl = document.querySelector('.form');
 const inputEl = formEl.querySelector('input[name="search-text"]');
 
-let currentQuery = "";
-
-formEl.addEventListener("submit", onSearch);
+formEl.addEventListener('submit', onSearch);
 
 function onSearch(evt) {
 evt.preventDefault();
@@ -17,52 +15,46 @@ evt.preventDefault();
 const query = inputEl.value.trim();
 
 if (!query) {
-iziToast.warning({
-title: "Warning",
-message: "Please enter a search term.",
-position: "topRight",
-});
-return;
+    iziToast.warning({
+    message: 'Please enter a search query!',
+    position: 'topRight',
+    backgroundColor: '#ef5350',
+    });
+    return;
 }
 
-currentQuery = query;
-
-showLoader();
 clearGallery();
+showLoader();
 
 getImagesByQuery(query)
-.then(data => {
+    .then(data => {
+    if (data.hits.length === 0) {
+        iziToast.info({
+        message:
+            'Sorry, there are no images matching your search query. Please try again!',
+        position: 'topRight',
+        backgroundColor: '#ef5350',
+        });
+        return;
+    }
 
-const images = Array.isArray(data.hits) ? data.hits : [];
+    createGallery(data.hits);
 
-
+    iziToast.success({
+        title: 'Success',
+        message: `Found ${data.totalHits} images.`,
+        position: 'topRight',
+    });
+    })
+    .catch(() => {
+    iziToast.error({
+        message:
+        'Something went wrong while fetching images. Please try again later.',
+        position: 'topRight',
+        backgroundColor: '#ef5350',
+});
+    })
+    .finally(() => {
 hideLoader();
-
-if (!images.length) {
-iziToast.error({
-title: "No results",
-message: "Sorry, there are no images matching your search query. Please try again!",
-position: "topRight",
-});
-return;
-}
-
-createGallery(images);
-
-iziToast.success({
-title: "Success",
-message: `Found ${images.length} images for "${query}".`,
-position: "topRight",
-});
-})
-.catch(err => {
-
-hideLoader();
-console.error("Error in main:", err);
-iziToast.error({
-title: "Error",
-message: "Something went wrong while fetching images. Check console for details.",
-position: "topRight",
-});
-});
+    });
 }

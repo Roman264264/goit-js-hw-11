@@ -10,10 +10,7 @@ const lightbox = new SimpleLightbox(".gallery a", {
   captionDelay: 250,
 });
 
-/**
- * Створює галерею з масиву зображень
- * @param {Array} images - масив об’єктів із зображеннями (Pixabay API -> hits[])
- */
+
 export function createGallery(images) {
   if (!Array.isArray(images) || images.length === 0) return;
 

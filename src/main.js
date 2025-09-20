@@ -18,7 +18,6 @@ if (!query) {
     iziToast.warning({
     message: 'Please enter a search query!',
     position: 'topRight',
-    backgroundColor: '#ef5350',
     });
     return;
 }
